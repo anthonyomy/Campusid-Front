@@ -7,6 +7,7 @@ export default createUseStyles({
 
     },
     containerContent: {
-        padding: 32
+        padding: 32,
+        minHeight: "600px"
     }
 });
