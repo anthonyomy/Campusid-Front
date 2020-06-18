@@ -13,7 +13,7 @@ import {
     CardMedia,
 } from '@material-ui/core';
 
-import { allowAuthentication, fetchUser } from 'api';
+import { fetchUser } from 'api';
 
 import {
     userLogin,
@@ -31,16 +31,6 @@ export default function FormDialog() {
     const classes = styles();
     const [idboard, setIdboard] = useState('');
     const [password, setPassword] = useState('');
-
-    const [isAuthenticated, setIsAuthenticated] = useState(
-        !!localStorage.getItem('id_token')
-    );
-
-    const [open, setOpen] = React.useState(true);
-
-    const handleClose = () => {
-        // setOpen(false);
-    };
 
     const callBackButton = () => {
         if (idboard && password) {
@@ -75,10 +65,6 @@ export default function FormDialog() {
         setPassword(event.target.value);
     };
 
-    useEffect(() => {
-        setIsAuthenticated(!!localStorage.getItem('id_token'));
-    }, []);
-
     return (
         <div>
             <Dialog
@@ -88,8 +74,7 @@ export default function FormDialog() {
                         "url('https://cdn2.scratch.mit.edu/get_image/gallery/5262616_170x100.png')",
                     backgroundSize: 'cover',
                 }}
-                open={open}
-                onClose={handleClose}
+                open={true}
                 PaperProps={{
                     style: {
                         backgroundColor: 'white',

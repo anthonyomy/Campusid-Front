@@ -19,7 +19,6 @@ export const allowAuthentication = (idboard, password) => {
 export const fetchUser = idboard => {
     return axios
         .get(`${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`)
-
         .then(response => {
             // returning the data here allows the caller to get it through another .then(...)
             return response.data;
@@ -52,13 +51,10 @@ export const uploadAvatar = (newAvatar, idboard) => {
     }
 };
 
-export function getGrades(id = null) {
-    let path = process.env.REACT_APP_MARKS_ROUTE;
-    if (id != null) path += `/${id}`;
-    return axios.get(path).then(response => {
-        // returning the data here allows the caller to get it through another .then(...)
-        return response.data;
-    });
+export async function getMarks(idboard) {
+    return axios
+        .get(`${process.env.REACT_APP_MARKS_ROUTE}/${idboard}`)
+        .then(response => response.data);
 }
 
 export function getCourses(id = null) {

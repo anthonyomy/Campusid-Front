@@ -1,20 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
+import { getIdboard } from 'common/state/selectors';
+import CustomInput from 'common/components/CustomInput';
 import TabCustom from 'common/components/TabCustom';
 import Accordeon from 'common/components/Accordeon';
-import GraphsContainer from 'common/components/GraphsContainer';
 import ColumnChartContainer from 'common/components/ColumnChartContainer';
 import RadartChart from 'common/components/RadarChartContainer';
-import { getGrades } from '../../api/index';
+import { getMarks } from '../../api/index';
 import _ from 'lodash';
 
 const Grades = () => {
-    const [matieres, setMatieres] = useState<any>([]);
+    const [allMatieres, setAllMatieres] = useState<any>([]);
+    const [filteredMatieres, setFilteredMatieres] = useState<any>();
+    const idboard = useSelector(getIdboard);
+    const [filterText, setFilterText] = useState('');
 
     useEffect(() => {
-        getGrades().then((res: any) => {
-            setMatieres(res);
+        try {
+            getMarks(idboard).then((res: any) => {
+                setAllMatieres(res);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }, [idboard]);
+
+    const onChange = (value: string) => {
+        setFilterText(value);
+    };
+
+    const filteredMatter = (arr: any, request: any) => {
+        return arr.filter((el: any) => {
+            if (el.descriptionDefaultValueDomain) {
+                return el.descriptionDefaultValueDomain
+                    .toLowerCase()
+                    .includes(request.toLowerCase());
+            }
+            return '';
         });
-    }, []);
+    };
+
+    const inputComputed = (event: any) => {
+        if (event) {
+            setFilteredMatieres(
+                filteredMatter(allMatieres, event.target.value)
+            );
+        } else {
+            setFilteredMatieres(allMatieres);
+        }
+    };
 
     let resultsTotale = {
         inProgress: {
@@ -39,16 +74,34 @@ const Grades = () => {
     };
 
     const getComponentAccordeon = () => {
-        return <Accordeon resultsTotale={resultsTotale} matieres={matieres} />;
+        return (
+            <>
+                <CustomInput
+                    id="outlined-required" //variant="outlined" type="text" style={{ margin: 20 }}
+                    size="medium"
+                    color="secondary"
+                    placeholder="text"
+                    hasIcon={true}
+                    value={filterText}
+                    onChange={onChange}
+                    callBack={inputComputed}
+                    name="Matiére"
+                />
+                <Accordeon
+                    resultsTotale={resultsTotale}
+                    matieres={filteredMatieres || allMatieres}
+                />
+            </>
+        );
     };
 
     const getOngletsWithData = () => {
         let tmpDomainAverage: any = [];
 
-        for (let y = 0; y < matieres.length; y++) {
+        for (let y = 0; y < allMatieres.length; y++) {
             let domainAverageToPush = {
-                name: matieres[y].descriptionDefaultValueDomain,
-                average: matieres[y].mediumOfIdIdentifiant,
+                name: allMatieres[y].descriptionDefaultValueDomain,
+                average: allMatieres[y].mediumOfIdIdentifiant,
             };
             tmpDomainAverage.push(domainAverageToPush);
         }
