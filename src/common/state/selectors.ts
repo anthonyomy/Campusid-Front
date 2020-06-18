@@ -5,3 +5,4 @@ export const getProfileImage = (state: Record<string, any>) =>
 export const getErrorPage = (state: Record<string, any>) => state?.errorPage;
 export const getIsAdmin = (state: Record<string, any>) => state?.isAdmin;
 export const getIdboard = (state: Record<string, any>) => state?.user?.idboard;
+export const getClassId = (state: Record<string, any>) => state?.user?.classId;
