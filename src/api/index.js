@@ -1,19 +1,19 @@
-import axios from 'axios';
+const axios = require('axios');
 
 export const allowAuthentication = (email, password) => {
     if (!email || !password) {
         return;
     }
-    return axios
-        .get(`${process.env.REACT_APP_STUDENT_ROUTE}?email=${email}`)
-        .then(response => {
-            if (response.data[0] && password === response.data[0].password) {
-                return response.data[0].email;
-            }
-            alert('Informations incorrectes');
-            return;
-        })
-        .catch(err => console.log(err));
+    return (
+    axios({
+        method: 'get',
+        url: "http://www.idboard.net:9000/student-api/Courses/courses-in-dates/65/2020-04-01/2020-07-01",
+        headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
+    }).then(response => {
+        return response.data;
+    }).catch(reason => {
+        console.error("there is an error", reason);
+    }))
 };
 
 export const fetchUser = email => {
