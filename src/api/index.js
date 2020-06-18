@@ -31,7 +31,7 @@ export const fetchCourses = idClass => {
 };
 
 export function getInternship(id = null) {
-    let path = process.env.REACT_APP_INTERNSHIP_ROUTE;
+    let path = process.env.REACT_APP_INTERNSHIP_CONVENTION_ROUTE;
     if (id != null) path += `/${id}`;
     return axios.get(path).then(response => {
         // returning the data here allows the caller to get it through another .then(...)
