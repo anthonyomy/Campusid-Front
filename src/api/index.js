@@ -1,11 +1,11 @@
-import axios from 'axios';
+const axios = require('axios');
 
 export const allowAuthentication = (idboard, password) => {
     if (!idboard || !password) {
         return;
     }
     return axios
-        .get(`${process.env.REACT_APP_STUDENT_ROUTE}?idboard=${idboard}`)
+        .get(`${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`)
         .then(response => {
             if (response.data[0] && password === response.data[0].password) {
                 return response.data[0].idboard;

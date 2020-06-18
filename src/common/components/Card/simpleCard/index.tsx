@@ -19,6 +19,7 @@ export default function SimpleCard(props: Props) {
 
     const handleClick = () => {
         alert('Button clicked ! :D');
+        alert("Button was clicked Once !");
     };
 
     return (
