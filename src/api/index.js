@@ -1,5 +1,25 @@
 const axios = require('axios');
 
+export const getTrombinoscope = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_TROMBINOSCOPE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const getMessages = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_MESSAGE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
 export const allowAuthentication = (idboard, password) => {
     if (!idboard || !password) {
         return;
@@ -31,7 +51,7 @@ export const fetchCourses = idClass => {
 };
 
 export function getInternship(id = null) {
-    let path = process.env.REACT_APP_INTERNSHIP_CONVENTION_ROUTE;
+    let path = process.env.REACT_APP_STAGES_ROUTE;
     if (id != null) path += `/${id}`;
     return axios.get(path).then(response => {
         // returning the data here allows the caller to get it through another .then(...)
@@ -69,3 +89,5 @@ export function getCourses(id = null) {
         return response.data;
     });
 }
+
+
