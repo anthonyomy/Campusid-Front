@@ -75,23 +75,10 @@ const Grades = () => {
 
     const getComponentAccordeon = () => {
         return (
-            <>
-                <CustomInput
-                    id="outlined-required" //variant="outlined" type="text" style={{ margin: 20 }}
-                    size="medium"
-                    color="secondary"
-                    placeholder="text"
-                    hasIcon={true}
-                    value={filterText}
-                    onChange={onChange}
-                    callBack={inputComputed}
-                    name="Matiére"
-                />
-                <Accordeon
-                    resultsTotale={resultsTotale}
-                    matieres={filteredMatieres || allMatieres}
-                />
-            </>
+            <Accordeon
+                resultsTotale={resultsTotale}
+                matieres={filteredMatieres || allMatieres}
+            />
         );
     };
 
@@ -140,7 +127,27 @@ const Grades = () => {
         ];
     };
 
-    return <TabCustom onglets={getOngletsWithData()} />;
+    return (
+        <>
+            <TabCustom
+                onglets={getOngletsWithData()}
+                input={
+                    <CustomInput
+                        id="outlined-required"
+                        size="medium"
+                        color="secondary"
+                        placeholder="text"
+                        hasIcon={true}
+                        value={filterText}
+                        onChange={onChange}
+                        callBack={inputComputed}
+                        name="Matiére"
+                    />
+                }
+            />
+            ;
+        </>
+    );
 };
 
 export default Grades;

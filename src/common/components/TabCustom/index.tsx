@@ -29,8 +29,6 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-/* <TabCustom onglets={tabArray}></TabCustom> */
-
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         flexGrow: 1,
@@ -62,8 +60,9 @@ function TabCustom(props: any) {
                     </Tabs>
                 </div>
             </AppBar>
+            <div>{props.input}</div>
             {props.onglets.map((onglet: any, index: any) => (
-                <TabPanel value={value} index={index} key={index}>
+                <TabPanel value={value} index={index}>
                     {onglet.component}
                 </TabPanel>
             ))}
