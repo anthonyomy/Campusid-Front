@@ -38,7 +38,7 @@ const AvatarPreviewDialog = ({
 
     const onSubmit = async () => {
         try {
-            dispatch(updateAvatar(null, currentUser?.id, onClose));
+            dispatch(updateAvatar(null, currentUser.idboard, onClose));
         } catch (e) {
             console.log(e);
         }
