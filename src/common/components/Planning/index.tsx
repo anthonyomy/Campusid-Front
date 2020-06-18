@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
 import { EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -12,23 +13,32 @@ import '@fullcalendar/timegrid/main.css';
 import '@fullcalendar/list/main.css';
 import ButtonCustom from '../ButtonCustom';
 import { fetchCourses } from 'api/index';
-
-interface DemoAppState {
-    calendarWeekends: boolean;
-    calendarEvents: EventInput[];
-}
+import { getIdCurrentClass } from 'common/state/selectors';
 
 export default function Planning() {
     const [courses, setCourses] = useState<EventInput[]>([]);
+    // const idCurrentClass = useSelector(getIdCurrentClass);
+    const idCurrentClass = 65; // only for dev
+
+    const now = moment();
+    const sixMonthBefore = now.subtract(6, 'months').format('Y-MM-DD');
+    const sixMonthAfter = now.add(6, 'months').format('Y-MM-DD');
 
     let tmpCourses: any = [];
 
     useEffect(() => {
-        fetchCourses(65, '2019-09-01', '2020-07-01')
+        fetchCourses(idCurrentClass, sixMonthBefore, sixMonthAfter)
             .then((res: any) => {
                 Object.entries(res).forEach(function(tmpCourse: any) {
+                    let titleSplit = tmpCourse[1].descriptionDefaultValue.split(
+                        '–'
+                    );
+                    console.log(titleSplit[0]);
+
                     tmpCourses.push({
-                        title: tmpCourse[1].descriptionDefaultValue,
+                        // title: tmpCourse[1].descriptionDefaultValue,
+                        title: titleSplit[0],
+                        titleInfo: titleSplit[1],
                         start: moment(tmpCourse[1].dateStart).toDate(),
                         end: moment(tmpCourse[1].dateEnd).toDate(),
                         description: tmpCourse[1].teacherName,
@@ -40,7 +50,7 @@ export default function Planning() {
             .then(() => {
                 setCourses(tmpCourses);
             })
-            .catch(e => {
+            .catch((e: Error) => {
                 console.log(e);
             });
     }, []);
@@ -54,19 +64,25 @@ export default function Planning() {
     };
 
     const eventRender = ({ event, el, view }: any) => {
-        console.log(view);
-
+        // do not display teacher name on month view
         if (view.viewSpec.type !== 'dayGridMonth') {
-            // do not display teacher name on month view
             const description = event.extendedProps.description;
-            var div = document.createElement('div');
+            var divTeacher = document.createElement('div');
             var text = document.createTextNode('Enseignant : ' + description);
-            div.appendChild(text);
-            el.appendChild(div);
+            divTeacher.appendChild(text);
+            el.appendChild(divTeacher);
+
+            const coursesInfo =
+                event.extendedProps.titleInfo !== undefined
+                    ? event.extendedProps.titleInfo
+                    : '';
+            var divInfo = document.createElement('div');
+            var textInfo = document.createTextNode(coursesInfo);
+            divInfo.appendChild(textInfo);
+            el.appendChild(divInfo);
         }
     };
 
-    console.log(courses);
     return (
         <div className={classes.demoApp}>
             <div className={classes.demoAppTop}>
@@ -78,7 +94,7 @@ export default function Planning() {
             </div>
             <div className={classes.demoAppCalendar}>
                 <FullCalendar
-                    defaultView="dayGridMonth"
+                    defaultView="timeGridWeek"
                     header={{
                         left: 'prev,next today',
                         center: 'title',

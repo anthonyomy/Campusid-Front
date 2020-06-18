@@ -4,3 +4,5 @@ export const getProfileImage = (state: Record<string, any>) =>
     state?.user?.avatar?.image;
 export const getErrorPage = (state: Record<string, any>) => state?.errorPage;
 export const getIsAdmin = (state: Record<string, any>) => state?.isAdmin;
+export const getIdCurrentClass = (state: Record<string, any>) =>
+    state?.user.idCurrentClass;
