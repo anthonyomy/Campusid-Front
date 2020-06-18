@@ -1,5 +1,35 @@
 const axios = require('axios');
 
+export const getTrombinoscope = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_TROMBINOSCOPE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const getPersonnalInformation = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_PERSONALINFORMATIONS}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const getMessages = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_MESSAGE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
 export const allowAuthentication = (idboard, password) => {
     if (!idboard || !password) {
         return;
@@ -19,7 +49,6 @@ export const allowAuthentication = (idboard, password) => {
 export const fetchUser = idboard => {
     return axios
         .get(`${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`)
-
         .then(response => {
             // returning the data here allows the caller to get it through another .then(...)
             return response.data;
@@ -44,7 +73,7 @@ export const fetchCourses = (idClass, startDate, endDate) => {
 };
 
 export function getInternship(id = null) {
-    let path = process.env.REACT_APP_INTERNSHIP_CONVENTION_ROUTE;
+    let path = process.env.REACT_APP_STAGES_ROUTE;
     if (id != null) path += `/${id}`;
     return axios.get(path).then(response => {
         // returning the data here allows the caller to get it through another .then(...)
@@ -65,13 +94,10 @@ export const uploadAvatar = (newAvatar, idboard) => {
     }
 };
 
-export function getGrades(id = null) {
-    let path = process.env.REACT_APP_MARKS_ROUTE;
-    if (id != null) path += `/${id}`;
-    return axios.get(path).then(response => {
-        // returning the data here allows the caller to get it through another .then(...)
-        return response.data;
-    });
+export async function getMarks(idboard) {
+    return axios
+        .get(`${process.env.REACT_APP_MARKS_ROUTE}/${idboard}`)
+        .then(response => response.data);
 }
 
 export function getCourses(id = null) {
@@ -82,3 +108,5 @@ export function getCourses(id = null) {
         return response.data;
     });
 }
+
+

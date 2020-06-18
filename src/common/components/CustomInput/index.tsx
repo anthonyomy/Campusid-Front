@@ -5,43 +5,6 @@ import '@storybook/addon-knobs/register';
 import SearchIcon from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-// export const CustomInputMail = () => {
-
-//   //const classes = useStyles();
-//   let inputComputed = (value : any) => {
-//     console.log("value");
-//     console.log(value.target.value);
-//   };
-
-//     return (
-//         <div className="customInput">
-//         <CustomInput
-//          id ="outlined-required"
-//          variant ="outlined"
-//          name="Enter your mail"
-//          type="mail"
-//          style ={{ margin: 20 }}
-//          size="small"
-//          color="secondary"
-//          defaultValue ="défaut@gmail.com"
-//          callBack={inputComputed}
-//         />
-//         </div>
-//     );
-// };
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            '& .MuiTextField-root': {
-                margin: theme.spacing(1),
-                width: 200,
-                background: 'white',
-            },
-        },
-    })
-);
-
 export default function CustomInput(props: any) {
     let type = props.type;
     let label = props.name;
@@ -54,8 +17,6 @@ export default function CustomInput(props: any) {
     let color = props.color;
     let placeholder = props.placeholder;
     let hasIcon = props.hasIcon;
-
-    let inputComputed = (value: any) => {};
 
     //const classes = useStyles();
     return (

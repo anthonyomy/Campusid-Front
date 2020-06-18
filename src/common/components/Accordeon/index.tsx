@@ -8,19 +8,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import useStyles from './style';
 import { Card, CardMedia, Grid } from '@material-ui/core';
 import { CardContent } from '@material-ui/core';
-import CustomInput from '../CustomInput';
 
 function Accordeon(props: any) {
     const classes = useStyles();
     let matieres = props.matieres;
     let resultsTotale = props.resultsTotale;
 
-    const [getMatieres, setMatieres] = useState(
-        matieres
-        // matieres.map(
-        //     (matiere: any) => matiere.descriptionDefaultValueDomain !== ''
-        // )
-    );
+    const [getMatieres, setMatieres] = useState(matieres);
 
     useEffect(() => {
         setMatieres(
@@ -28,7 +22,7 @@ function Accordeon(props: any) {
                 return matiere.descriptionDefaultValueDomain !== '';
             })
         );
-    }, []);
+    }, [matieres]);
 
     let ectsObtained = 0;
     matieres.map((matiere: any) => {
@@ -37,7 +31,6 @@ function Accordeon(props: any) {
         });
     });
 
-    console.log(ectsObtained);
     const matiereInProgress = matieres.filter((matiere: any) => {
         return matiere.isValidate === undefined;
     }).length;
@@ -65,23 +58,6 @@ function Accordeon(props: any) {
                 ? classes.details + ' ' + classes.backgroundInvalid
                 : classes.details;
         });
-    };
-    let filtreText = (arr: any, requete: any) => {
-        return arr.filter(function(el: any) {
-            return el.name.toLowerCase().indexOf(requete.toLowerCase()) !== -1;
-        });
-    };
-
-    let inputComputed = (value: any) => {
-        let name = value.target.value;
-        if (name !== '') setMatieres(filtreText(matieres, name));
-        else
-            setMatieres(
-                matieres.filter(
-                    (matiere: any) =>
-                        matiere.descriptionDefaultValueDomain !== ''
-                )
-            );
     };
 
     return (
@@ -113,7 +89,7 @@ function Accordeon(props: any) {
                                                 />
                                             </Grid>
 
-                                            <Grid item alignItems="center">
+                                            <Grid item>
                                                 <Typography
                                                     component="h6"
                                                     variant="h6"
@@ -127,13 +103,18 @@ function Accordeon(props: any) {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid item xs={12} sm container>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm
+                                        container
+                                        alignItems="center"
+                                    >
                                         <Grid
                                             item
                                             container
                                             direction="column"
                                             justify="center"
-                                            alignItems="center"
                                         >
                                             <Grid item>
                                                 <CardMedia
@@ -232,16 +213,6 @@ function Accordeon(props: any) {
                                     </Grid>
                                 </Grid>
                             </div>
-
-                            <CustomInput
-                                id="outlined-required" //variant="outlined" type="text" style={{ margin: 20 }}
-                                size="medium"
-                                color="secondary"
-                                placeholder="text"
-                                hasIcon={true}
-                                callBack={inputComputed}
-                                name="Matiére"
-                            />
                         </CardContent>
                     </div>
                 </Card>
@@ -291,10 +262,7 @@ function Accordeon(props: any) {
                                                         matter
                                                     )}
                                                 >
-                                                    <Typography
-                                                        component="h6"
-                                                        variant="h6"
-                                                    >
+                                                    <Typography variant="h6">
                                                         {
                                                             matter.descriptionDefaultValue
                                                         }{' '}
