@@ -44,6 +44,7 @@ export default function FormDialog() {
                             photo: res.photoPath,
                             avatar: res.avatar || '',
                             role: res.idTypeBusinessEntity,
+                            idCurrentClass: res.idCurrentClass,
                         })
                     );
                 })
