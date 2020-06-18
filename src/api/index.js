@@ -94,9 +94,9 @@ export const uploadAvatar = (newAvatar, idboard) => {
     }
 };
 
-export async function getMarks(idboard) {
+export async function getMarks(idboard, classId) {
     return axios
-        .get(`${process.env.REACT_APP_MARKS_ROUTE}/${idboard}`)
+        .get(`${process.env.REACT_APP_MARKS_ROUTE}/${idboard}/${classId}`)
         .then(response => response.data);
 }
 

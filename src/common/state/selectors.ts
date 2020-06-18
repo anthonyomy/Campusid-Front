@@ -7,3 +7,4 @@ export const getIsAdmin = (state: Record<string, any>) => state?.isAdmin;
 export const getIdCurrentClass = (state: Record<string, any>) =>
     state?.user.idCurrentClass;
 export const getIdboard = (state: Record<string, any>) => state?.user?.idboard;
+export const getClassId = (state: Record<string, any>) => state?.user?.classId;

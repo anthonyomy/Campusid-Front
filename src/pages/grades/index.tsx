@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { getIdboard } from 'common/state/selectors';
+import { getIdboard, getClassId } from 'common/state/selectors';
 import CustomInput from 'common/components/CustomInput';
 import TabCustom from 'common/components/TabCustom';
 import Accordeon from 'common/components/Accordeon';
@@ -11,20 +11,22 @@ import { getMarks } from '../../api/index';
 import _ from 'lodash';
 
 const Grades = () => {
+    const idboard = useSelector(getIdboard);
+    const classId = useSelector(getClassId);
+
     const [allMatieres, setAllMatieres] = useState<any>([]);
     const [filteredMatieres, setFilteredMatieres] = useState<any>();
-    const idboard = useSelector(getIdboard);
     const [filterText, setFilterText] = useState('');
 
     useEffect(() => {
         try {
-            getMarks(idboard).then((res: any) => {
+            getMarks(idboard, classId).then((res: any) => {
                 setAllMatieres(res);
             });
         } catch (err) {
             console.log(err);
         }
-    }, [idboard]);
+    }, [classId, idboard]);
 
     const onChange = (value: string) => {
         setFilterText(value);
@@ -75,23 +77,27 @@ const Grades = () => {
 
     const getComponentAccordeon = () => {
         return (
-            <Accordeon
-                resultsTotale={resultsTotale}
-                matieres={filteredMatieres || allMatieres}
-            />
+            allMatieres && (
+                <Accordeon
+                    resultsTotale={resultsTotale}
+                    matieres={filteredMatieres || allMatieres}
+                />
+            )
         );
     };
 
     const getOngletsWithData = () => {
-        let tmpDomainAverage: any = [];
-
-        for (let y = 0; y < allMatieres.length; y++) {
-            let domainAverageToPush = {
-                name: allMatieres[y].descriptionDefaultValueDomain,
-                average: allMatieres[y].mediumOfIdIdentifiant,
-            };
-            tmpDomainAverage.push(domainAverageToPush);
-        }
+        const tmpDomainAverage = allMatieres.map(
+            (e: {
+                descriptionDefaultValueDomain: string;
+                mediumOfIdIdentifiant: string;
+            }) => {
+                return {
+                    name: e.descriptionDefaultValueDomain,
+                    average: e.mediumOfIdIdentifiant,
+                };
+            }
+        );
 
         const orderAscDomainAverage = _.orderBy(
             tmpDomainAverage,
@@ -111,7 +117,7 @@ const Grades = () => {
         return [
             { name: 'Note', component: getComponentAccordeon },
             // {
-            //     name: 'Graphique Camenbert',
+            //     name: 'Graphique Camembert',
             //     component: <GraphsContainer dataAverage={tmpDomainAverage} />,
             // },
             {
@@ -129,23 +135,18 @@ const Grades = () => {
 
     return (
         <>
-            <TabCustom
-                onglets={getOngletsWithData()}
-                input={
-                    <CustomInput
-                        id="outlined-required"
-                        size="medium"
-                        color="secondary"
-                        placeholder="text"
-                        hasIcon={true}
-                        value={filterText}
-                        onChange={onChange}
-                        callBack={inputComputed}
-                        name="Matiére"
-                    />
-                }
+            <CustomInput
+                id="outlined-required"
+                size="medium"
+                color="secondary"
+                placeholder="Matière..."
+                hasIcon={true}
+                value={filterText}
+                onChange={onChange}
+                callBack={inputComputed}
+                name="Matière"
             />
-            ;
+            <TabCustom onglets={getOngletsWithData()} />;
         </>
     );
 };

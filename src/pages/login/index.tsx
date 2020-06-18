@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -39,6 +39,7 @@ export default function FormDialog() {
                     dispatch(
                         userLogin({
                             idboard: res.idboard,
+                            classId: res.idCurrentClass,
                             lastname: res.name,
                             firstname: res.firstName,
                             photo: res.photoPath,
