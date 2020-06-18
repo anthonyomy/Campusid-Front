@@ -26,8 +26,21 @@ export const fetchUser = idboard => {
         });
 };
 
-export const fetchCourses = idClass => {
-    return axios.get(`${process.env.REACT_APP_COURSES_ROUTE}/${idClass}`);
+export const fetchCourses = (idClass, startDate, endDate) => {
+    return axios
+        .get(
+            `${process.env.REACT_APP_COURSES_ROUTE}/${idClass}/${startDate}/${endDate}`,
+
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
+            }
+        )
+        .then(response => {
+            return response.data;
+        });
 };
 
 export function getInternship(id = null) {
