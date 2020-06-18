@@ -10,6 +10,16 @@ export const getTrombinoscope = idboard => {
         });
 };
 
+export const getPersonnalInformation = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_PERSONALINFORMATIONS}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
 export const getMessages = idboard => {
     return axios
         .get(`${process.env.REACT_APP_MESSAGE_ROUTE}/${idboard}`)
