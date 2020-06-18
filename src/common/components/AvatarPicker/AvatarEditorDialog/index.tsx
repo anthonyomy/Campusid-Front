@@ -115,7 +115,9 @@ const AvatarEditorDialog = ({
                 cropperInfos?.rotation
             );
             try {
-                dispatch(updateAvatar(croppedImage, currentUser.id, onClose));
+                dispatch(
+                    updateAvatar(croppedImage, currentUser.idboard, onClose)
+                );
             } catch (e) {
                 console.log(e);
             }
