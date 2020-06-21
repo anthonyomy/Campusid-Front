@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { getCurrentUser } from 'common/state/selectors';
 
 type User = {
-    id: number;
+    idboard: number;
     lastname: string;
     firstname: string;
     role: string;

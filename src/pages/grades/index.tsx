@@ -1,20 +1,57 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
+import { getIdboard, getClassId } from 'common/state/selectors';
+import CustomInput from 'common/components/CustomInput';
 import TabCustom from 'common/components/TabCustom';
 import Accordeon from 'common/components/Accordeon';
-import GraphsContainer from 'common/components/GraphsContainer';
 import ColumnChartContainer from 'common/components/ColumnChartContainer';
 import RadartChart from 'common/components/RadarChartContainer';
-import { getGrades } from '../../api/index';
+import { getMarks } from '../../api/index';
 import _ from 'lodash';
 
 const Grades = () => {
-    const [matieres, setMatieres] = useState<any>([]);
+    const idboard = useSelector(getIdboard);
+    const classId = useSelector(getClassId);
+
+    const [allMatieres, setAllMatieres] = useState<any>([]);
+    const [filteredMatieres, setFilteredMatieres] = useState<any>();
+    const [filterText, setFilterText] = useState('');
 
     useEffect(() => {
-        getGrades().then((res: any) => {
-            setMatieres(res);
+        try {
+            getMarks(idboard, classId).then((res: any) => {
+                setAllMatieres(res);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }, [classId, idboard]);
+
+    const onChange = (value: string) => {
+        setFilterText(value);
+    };
+
+    const filteredMatter = (arr: any, request: any) => {
+        return arr.filter((el: any) => {
+            if (el.descriptionDefaultValueDomain) {
+                return el.descriptionDefaultValueDomain
+                    .toLowerCase()
+                    .includes(request.toLowerCase());
+            }
+            return '';
         });
-    }, []);
+    };
+
+    const inputComputed = (event: any) => {
+        if (event) {
+            setFilteredMatieres(
+                filteredMatter(allMatieres, event.target.value)
+            );
+        } else {
+            setFilteredMatieres(allMatieres);
+        }
+    };
 
     let resultsTotale = {
         inProgress: {
@@ -39,19 +76,28 @@ const Grades = () => {
     };
 
     const getComponentAccordeon = () => {
-        return <Accordeon resultsTotale={resultsTotale} matieres={matieres} />;
+        return (
+            allMatieres && (
+                <Accordeon
+                    resultsTotale={resultsTotale}
+                    matieres={filteredMatieres || allMatieres}
+                />
+            )
+        );
     };
 
     const getOngletsWithData = () => {
-        let tmpDomainAverage: any = [];
-
-        for (let y = 0; y < matieres.length; y++) {
-            let domainAverageToPush = {
-                name: matieres[y].descriptionDefaultValueDomain,
-                average: matieres[y].mediumOfIdIdentifiant,
-            };
-            tmpDomainAverage.push(domainAverageToPush);
-        }
+        const tmpDomainAverage = allMatieres.map(
+            (e: {
+                descriptionDefaultValueDomain: string;
+                mediumOfIdIdentifiant: string;
+            }) => {
+                return {
+                    name: e.descriptionDefaultValueDomain,
+                    average: e.mediumOfIdIdentifiant,
+                };
+            }
+        );
 
         const orderAscDomainAverage = _.orderBy(
             tmpDomainAverage,
@@ -71,7 +117,7 @@ const Grades = () => {
         return [
             { name: 'Note', component: getComponentAccordeon },
             // {
-            //     name: 'Graphique Camenbert',
+            //     name: 'Graphique Camembert',
             //     component: <GraphsContainer dataAverage={tmpDomainAverage} />,
             // },
             {
@@ -87,7 +133,22 @@ const Grades = () => {
         ];
     };
 
-    return <TabCustom onglets={getOngletsWithData()} />;
+    return (
+        <>
+            <CustomInput
+                id="outlined-required"
+                size="medium"
+                color="secondary"
+                placeholder="Matière..."
+                hasIcon={true}
+                value={filterText}
+                onChange={onChange}
+                callBack={inputComputed}
+                name="Matière"
+            />
+            <TabCustom onglets={getOngletsWithData()} />;
+        </>
+    );
 };
 
 export default Grades;

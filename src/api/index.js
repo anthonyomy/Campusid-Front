@@ -1,14 +1,44 @@
-import axios from 'axios';
+const axios = require('axios');
 
-export const allowAuthentication = (email, password) => {
-    if (!email || !password) {
+export const getTrombinoscope = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_TROMBINOSCOPE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const getPersonnalInformation = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_PERSONALINFORMATIONS}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const getMessages = idboard => {
+    return axios
+        .get(`${process.env.REACT_APP_MESSAGE_ROUTE}/${idboard}`)
+
+        .then(response => {
+            // returning the data here allows the caller to get it through another .then(...)
+            return response.data;
+        });
+};
+
+export const allowAuthentication = (idboard, password) => {
+    if (!idboard || !password) {
         return;
     }
     return axios
-        .get(`${process.env.REACT_APP_STUDENT_ROUTE}?email=${email}`)
+        .get(`${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`)
         .then(response => {
             if (response.data[0] && password === response.data[0].password) {
-                return response.data[0].email;
+                return response.data[0].idboard;
             }
             alert('Informations incorrectes');
             return;
@@ -16,21 +46,34 @@ export const allowAuthentication = (email, password) => {
         .catch(err => console.log(err));
 };
 
-export const fetchUser = email => {
+export const fetchUser = idboard => {
     return axios
-        .get(`${process.env.REACT_APP_STUDENT_ROUTE}/?email=${email}`)
+        .get(`${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`)
         .then(response => {
             // returning the data here allows the caller to get it through another .then(...)
             return response.data;
         });
 };
 
-export const fetchCourses = idClass => {
-    return axios.get(`${process.env.REACT_APP_COURSES_ROUTE}/${idClass}`);
+export const fetchCourses = (idClass, startDate, endDate) => {
+    return axios
+        .get(
+            `${process.env.REACT_APP_COURSES_ROUTE}/${idClass}/${startDate}/${endDate}`,
+
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
+            }
+        )
+        .then(response => {
+            return response.data;
+        });
 };
 
 export function getInternship(id = null) {
-    let path = process.env.REACT_APP_INTERNSHIP_ROUTE;
+    let path = process.env.REACT_APP_STAGES_ROUTE;
     if (id != null) path += `/${id}`;
     return axios.get(path).then(response => {
         // returning the data here allows the caller to get it through another .then(...)
@@ -38,20 +81,27 @@ export function getInternship(id = null) {
     });
 }
 
-export const uploadAvatar = (newAvatar, userId) => {
+export const uploadAvatar = (newAvatar, idboard) => {
     try {
-        return axios.patch(`${process.env.REACT_APP_STUDENT_ROUTE}/${userId}`, {
-            avatar: newAvatar,
-        });
-        console.log('success');
+        return axios.patch(
+            `${process.env.REACT_APP_STUDENT_ROUTE}/${idboard}`,
+            {
+                avatar: newAvatar,
+            }
+        );
     } catch (e) {
-        console.log('erf');
         return e.response.status;
     }
 };
 
-export function getGrades(id = null) {
-    let path = process.env.REACT_APP_GRADES_ROUTE;
+export async function getMarks(idboard, classId) {
+    return axios
+        .get(`${process.env.REACT_APP_MARKS_ROUTE}/${idboard}/${classId}`)
+        .then(response => response.data);
+}
+
+export function getCourses(id = null) {
+    let path = process.env.REACT_APP_COURSES_ROUTE;
     if (id != null) path += `/${id}`;
     return axios.get(path).then(response => {
         // returning the data here allows the caller to get it through another .then(...)
@@ -59,11 +109,4 @@ export function getGrades(id = null) {
     });
 }
 
-export function getCourses(id = null) {
-    let path = process.env.REACT_APP_EXTERNAL_COURSES_ROUTE;
-    if (id != null) path += `/${id}`;
-    return axios.get(path).then(response => {
-        // returning the data here allows the caller to get it through another .then(...)
-        return response.data;
-    });
-}
+

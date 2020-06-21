@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import MailOutlineOutlinedIcon from '@material-ui/icons/MailOutlineOutlined';
@@ -19,9 +19,13 @@ import {
 import Avatar from 'common/components/Avatar';
 import AvatarPicker from 'common/components/AvatarPicker';
 import ButtonCustom from 'common/components/ButtonCustom';
+import {getPersonnalInformation} from 'api/';
 
 import { useCurrentUser } from 'common/hooks';
 import { getProfileImage } from 'common/state/selectors';
+import ImageCard from '../Card/ImageCard';
+import moment from 'moment';
+import 'moment/locale/fr';
 
 import styles from './style';
 import { Button, Grid, GridSpacing,Container, Card, DialogTitle, List, ListItemAvatar, DialogActions, DialogContent, DialogContentText } from '@material-ui/core';
@@ -32,7 +36,18 @@ type User = {
     idboard: string;
     avatar?: string;
 };
+
+type UserPersonnalInfo = {
+    adress1: string;
+    firstname: string;
+    idboard: string;
+    avatar?: string;
+};
+
 const Header = () => {
+
+
+
     const classes = styles();
     const auth = !!localStorage.getItem('state');
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -48,6 +63,26 @@ const Header = () => {
     const [openMail, setMail] = React.useState(false);
     const [openMdp, setMdp] = React.useState(false);
     const [openData, setData] = React.useState(false);
+    const [personnalInformation, setPersonnalInformation] = useState({
+        address1: "",
+        city: "",
+        country: "",
+        dateStart: "",
+        postalCode: "",
+        email: "",
+        phoneNumber: ""
+});
+
+    useEffect(() => {
+        getPersonnalInformation(currentUser.idboard)
+            .then((res : any) => {
+                console.log('res personnal info' , res);
+                let objToReturn = {...res.contactDetails};
+                objToReturn.email = res.informations[1].value;
+                objToReturn.phoneNumber = res.informations[0].value;
+                setPersonnalInformation(objToReturn);
+            })
+    }, []);
     
     const handleClickOpenMail = () => {
         setMail(true);
@@ -136,24 +171,47 @@ const Header = () => {
             const returnDialogData = () => {
                 return (
                     <div>
-                        <Dialog
-                            open={openData}
-                            onClose={handleCloseData}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title"></DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    scolarite@campusid.com
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleCloseData} color="primary">
-                                    Fermé
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        { personnalInformation != null ?
+                            (<Dialog
+                                fullWidth={true}
+                                open={openData}
+                                onClose={handleCloseData}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                            >
+                                <DialogTitle id="alert-dialog-title"></DialogTitle>
+                                <ImageCard
+                                    image={
+                                        src
+                                    }
+                                    title={""}
+                                    text={
+                                        ""
+                                    }
+                                    hasButton={false}
+                                    buttonText={'détails'}
+                                    altImage={'Avatar'}
+                                    textCompany={''}
+                                    typeDeMission={''}
+                                    duree={''}
+                                    start={'Inscrit depuis : ' + moment(personnalInformation.dateStart).format('ll')}
+                                    end={''}
+                                    contact={''}
+                                    phone={'Téléphone : ' + personnalInformation.phoneNumber}
+                                    mail={'Email : ' + personnalInformation.email}
+                                    adress={'Adress : ' + personnalInformation.address1}
+                                    postal={'Code postal : ' + personnalInformation.postalCode}
+                                    ville={'Ville : ' + personnalInformation.city}
+                                    pays={'Pays : ' + personnalInformation.country}
+                                />
+                                <DialogActions>
+                                    <Button onClick={handleCloseData} color="primary">
+                                        Fermé
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>) :
+                        ""}
+
                     </div>
                 )};
 
@@ -265,21 +323,6 @@ const Header = () => {
                                           </Link>
 
                                             <br></br>
-                                              <ButtonCustom
-                                                callBack={handleClickOpenMail}
-                                                typeButton="contained"
-                                                valueButton="Envoyer un mail"
-                                                icon = {< MailOutlineOutlinedIcon/>}
-                                            ></ButtonCustom>
-                                            <br></br>
-                                              <ButtonCustom
-                                                callBack={handleClickOpenMdp}
-                                                typeButton="contained"
-                                                valueButton="Modifier le MDP"
-                                                icon = {< VpnKeyOutlinedIcon/>}
-
-                                            ></ButtonCustom>
-                                            <br></br>
                                        
                                             <ButtonCustom
                                                 callBack={handleClickOpenData}
@@ -294,8 +337,6 @@ const Header = () => {
                         </div>
                     )}
                 </Toolbar>
-                {returnDialogMail()}
-                {returnDialogMdp()}
                 {returnDialogData()}
 
             </AppBar>

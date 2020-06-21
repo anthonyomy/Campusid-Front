@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -13,7 +13,7 @@ import {
     CardMedia,
 } from '@material-ui/core';
 
-import { allowAuthentication, fetchUser } from 'api';
+import { fetchUser } from 'api';
 
 import {
     userLogin,
@@ -29,61 +29,43 @@ import styles from './style';
 export default function FormDialog() {
     const dispatch = useDispatch();
     const classes = styles();
-    const [email, setEmail] = useState('');
+    const [idboard, setIdboard] = useState('');
     const [password, setPassword] = useState('');
 
-    const [isAuthenticated, setIsAuthenticated] = useState(
-        !!localStorage.getItem('id_token')
-    );
-
-    const [open, setOpen] = React.useState(true);
-
-    const handleClose = () => {
-        // setOpen(false);
-    };
-
-    const callBackButton = async () => {
-        if (email && password) {
-            try {
-                await allowAuthentication(email, password)
-                    .then(response => fetchUser(response))
-                    .then(res => {
-                        dispatch(
-                            userLogin({
-                                lastname: res[0].lastname,
-                                firstname: res[0].firstname,
-                                avatar: res[0].avatar,
-                                role: res[0].role,
-                                id: res[0].id,
-                                email: res[0].email,
-                            })
-                        );
-                    })
-                    .then(res => {
-                        dispatch(userLoginSuccess);
-                        if (res[0].role === 'admin') {
-                            window.location.assign('/admin');
-                        } else {
-                            window.location.assign(`/planning`);
-                        }
-                    });
-            } catch (err) {
-                dispatch(userLoginError);
-            }
+    const callBackButton = () => {
+        if (idboard && password) {
+            fetchUser(idboard)
+                .then(res => {
+                    dispatch(
+                        userLogin({
+                            idboard: res.idboard,
+                            classId: res.idCurrentClass,
+                            lastname: res.name,
+                            firstname: res.firstName,
+                            photo: res.photoPath,
+                            avatar: res.avatar || '',
+                            role: res.idTypeBusinessEntity,
+                            idCurrentClass: res.idCurrentClass,
+                        })
+                    );
+                })
+                .then(() => {
+                    dispatch(userLoginSuccess);
+                    window.location.assign('/planning');
+                })
+                .catch(err => {
+                    dispatch(userLoginError);
+                });
         }
     };
 
     const inputMailComputed = (event: any) => {
-        setEmail(event.target.value);
+        setIdboard(event.target.value);
     };
 
     const inputPasswordComputed = (event: any) => {
         setPassword(event.target.value);
     };
-
-    useEffect(() => {
-        setIsAuthenticated(!!localStorage.getItem('id_token'));
-    }, []);
 
     return (
         <div>
@@ -94,8 +76,7 @@ export default function FormDialog() {
                         "url('https://cdn2.scratch.mit.edu/get_image/gallery/5262616_170x100.png')",
                     backgroundSize: 'cover',
                 }}
-                open={open}
-                onClose={handleClose}
+                open={true}
                 PaperProps={{
                     style: {
                         backgroundColor: 'white',
@@ -108,8 +89,7 @@ export default function FormDialog() {
                     style={{
                         textAlign: 'center',
                         color: 'white',
-                        backgroundColor: '#B70000',
-                        height: '27%',
+                        backgroundColor: '#B70000'
                     }}
                     id="form-dialog-title"
                 >
@@ -154,7 +134,7 @@ export default function FormDialog() {
                 <DialogActions style={{ display: 'flex' }}>
                     <div style={{ margin: 'auto', backgroundColor: 'white' }}>
                         <ButtonCustom
-                            disabled={!password || !email}
+                            disabled={!password || !idboard}
                             callBack={callBackButton}
                             typeButton="contained"
                             valueButton="Se connecter"

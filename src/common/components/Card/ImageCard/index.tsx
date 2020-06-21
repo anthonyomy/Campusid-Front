@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
 import styles from './style';
-import { StepLineSeriesSegment } from '@amcharts/amcharts4/.internal/charts/series/StepLineSeriesSegment';
 
 type Props = {
     title: string;
