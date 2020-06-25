@@ -33,10 +33,8 @@ export default function Planning() {
                     let titleSplit = tmpCourse[1].descriptionDefaultValue.split(
                         '–'
                     );
-                    console.log(titleSplit[0]);
 
                     tmpCourses.push({
-                        // title: tmpCourse[1].descriptionDefaultValue,
                         title: titleSplit[0],
                         titleInfo: titleSplit[1],
                         start: moment(tmpCourse[1].dateStart).toDate(),

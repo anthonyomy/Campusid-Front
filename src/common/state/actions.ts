@@ -22,7 +22,6 @@ export const USER_LOGOUT = 'userLogout';
 
 export const fetchCurrentUser = (email: string) => (dispatch: any) => {
     try {
-        console.log('toto');
         dispatch({
             type: FETCH_CURRENT_USER,
             payload: { fetchingUser: true },

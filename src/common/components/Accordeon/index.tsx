@@ -14,50 +14,44 @@ function Accordeon(props: any) {
     let matieres = props.matieres;
     let resultsTotale = props.resultsTotale;
 
-    const [getMatieres, setMatieres] = useState(matieres);
-
-    useEffect(() => {
-        setMatieres(
-            matieres.filter((matiere: any) => {
-                return matiere.descriptionDefaultValueDomain !== '';
-            })
-        );
-    }, [matieres]);
-
     let ectsObtained = 0;
+    let ectsTotalYears = 0;
     matieres.map((matiere: any) => {
-        matiere.matters.map((mark: any) => {
-            ectsObtained += mark.ectscredits;
-        });
+        ectsTotalYears += matiere.ectscredits;
+        if (matiere.isValidate === 1) {
+            ectsObtained += matiere.ectscredits;
+        }
     });
 
     const matiereInProgress = matieres.filter((matiere: any) => {
-        return matiere.isValidate === undefined;
+        return matiere.isValidate === 0;
     }).length;
 
     const mattersValidation = matieres.filter((matiere: any) => {
-        return matiere.isValidate === true;
+        return matiere.isValidate === 1;
     }).length;
 
     const mattersCancelled = matieres.filter(
-        (matiere: any) => matiere.isValidate === false
+        (matiere: any) => matiere.isValidate === -1
     ).length;
 
     const getBackgroundHeading = (matiere: any) => {
-        return matiere.isValidate === true
+        return matiere.isValidate === 1
             ? classes.backgroundValid
-            : matiere.isValidate === false
+            : matiere.isValidate === -1
             ? classes.backgroundInvalid
             : classes.heading;
     };
     const getClassOfNote = (note: any) => {
-        return note.marks.map((mark: any) => {
-            return mark.value >= 10
-                ? classes.details + ' ' + classes.backgroundValid
-                : mark.value < 10
-                ? classes.details + ' ' + classes.backgroundInvalid
-                : classes.details;
-        });
+        if (note.marks !== null) {
+            return note.marks.map((mark: any) => {
+                return mark.value >= 10
+                    ? classes.details + ' ' + classes.backgroundValid
+                    : mark.value < 10
+                    ? classes.details + ' ' + classes.backgroundInvalid
+                    : classes.details;
+            });
+        }
     };
 
     return (
@@ -206,7 +200,12 @@ function Accordeon(props: any) {
                                                             .obtainedCredits
                                                             .name
                                                     }{' '}
-                                                    : {Math.round(ectsObtained)}
+                                                    :{' '}
+                                                    {Math.round(ectsObtained) +
+                                                        '/' +
+                                                        Math.round(
+                                                            ectsTotalYears
+                                                        )}
                                                 </Typography>
                                             </Grid>
                                         </Grid>
@@ -268,56 +267,64 @@ function Accordeon(props: any) {
                                                         }{' '}
                                                         / {matter.type}
                                                     </Typography>
-
-                                                    {matter.marks.map(function(
-                                                        note: any,
-                                                        indexB: any
-                                                    ) {
-                                                        return (
-                                                            <>
-                                                                <Typography variant="subtitle1">
-                                                                    Date :{' '}
-                                                                    <strong>
-                                                                        24/04/2020
-                                                                    </strong>
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-                                                                    Note :{' '}
-                                                                    <strong>
-                                                                        {
-                                                                            note.value
-                                                                        }
-                                                                    </strong>
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-                                                                    Coef :{' '}
-                                                                    <strong>
-                                                                        {
-                                                                            note.coefficient
-                                                                        }
-                                                                    </strong>
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-                                                                    Moyenne de
-                                                                    la classe :{' '}
-                                                                    <strong>
-                                                                        {
-                                                                            note.mediumOfClasses
-                                                                        }
-                                                                    </strong>
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-                                                                    Commentaire
-                                                                    :{' '}
-                                                                    <strong>
-                                                                        {
-                                                                            note.comments
-                                                                        }
-                                                                    </strong>
-                                                                </Typography>
-                                                            </>
-                                                        );
-                                                    })}
+                                                    {matter.marks &&
+                                                        matter.marks.map(
+                                                            function(
+                                                                note: any,
+                                                                indexB: any
+                                                            ) {
+                                                                return (
+                                                                    <>
+                                                                        <Typography variant="subtitle1">
+                                                                            Date
+                                                                            :{' '}
+                                                                            <strong>
+                                                                                24/04/2020
+                                                                            </strong>
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1">
+                                                                            Note
+                                                                            :{' '}
+                                                                            <strong>
+                                                                                {
+                                                                                    note.value
+                                                                                }
+                                                                            </strong>
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1">
+                                                                            Coef
+                                                                            :{' '}
+                                                                            <strong>
+                                                                                {
+                                                                                    note.coefficient
+                                                                                }
+                                                                            </strong>
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1">
+                                                                            Moyenne
+                                                                            de
+                                                                            la
+                                                                            classe
+                                                                            :{' '}
+                                                                            <strong>
+                                                                                {
+                                                                                    note.mediumOfClasses
+                                                                                }
+                                                                            </strong>
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1">
+                                                                            Commentaire
+                                                                            :{' '}
+                                                                            <strong>
+                                                                                {
+                                                                                    note.comments
+                                                                                }
+                                                                            </strong>
+                                                                        </Typography>
+                                                                    </>
+                                                                );
+                                                            }
+                                                        )}
                                                 </CardContent>
                                             </div>
                                         </Card>

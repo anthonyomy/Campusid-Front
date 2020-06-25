@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import MailOutlineOutlinedIcon from '@material-ui/icons/MailOutlineOutlined';
@@ -19,7 +19,7 @@ import {
 import Avatar from 'common/components/Avatar';
 import AvatarPicker from 'common/components/AvatarPicker';
 import ButtonCustom from 'common/components/ButtonCustom';
-import {getPersonnalInformation} from 'api/';
+import { getPersonnalInformation } from 'api/';
 
 import { useCurrentUser } from 'common/hooks';
 import { getProfileImage } from 'common/state/selectors';
@@ -28,7 +28,19 @@ import moment from 'moment';
 import 'moment/locale/fr';
 
 import styles from './style';
-import { Button, Grid, GridSpacing,Container, Card, DialogTitle, List, ListItemAvatar, DialogActions, DialogContent, DialogContentText } from '@material-ui/core';
+import {
+    Button,
+    Grid,
+    GridSpacing,
+    Container,
+    Card,
+    DialogTitle,
+    List,
+    ListItemAvatar,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+} from '@material-ui/core';
 
 type User = {
     name: string;
@@ -45,9 +57,6 @@ type UserPersonnalInfo = {
 };
 
 const Header = () => {
-
-
-
     const classes = styles();
     const auth = !!localStorage.getItem('state');
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -58,32 +67,29 @@ const Header = () => {
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
-        
     };
     const [openMail, setMail] = React.useState(false);
     const [openMdp, setMdp] = React.useState(false);
     const [openData, setData] = React.useState(false);
     const [personnalInformation, setPersonnalInformation] = useState({
-        address1: "",
-        city: "",
-        country: "",
-        dateStart: "",
-        postalCode: "",
-        email: "",
-        phoneNumber: ""
-});
+        address1: '',
+        city: '',
+        country: '',
+        dateStart: '',
+        postalCode: '',
+        email: '',
+        phoneNumber: '',
+    });
 
     useEffect(() => {
-        getPersonnalInformation(currentUser.idboard)
-            .then((res : any) => {
-                console.log('res personnal info' , res);
-                let objToReturn = {...res.contactDetails};
-                objToReturn.email = res.informations[1].value;
-                objToReturn.phoneNumber = res.informations[0].value;
-                setPersonnalInformation(objToReturn);
-            })
+        getPersonnalInformation(currentUser.idboard).then((res: any) => {
+            let objToReturn = { ...res.contactDetails };
+            objToReturn.email = res.informations[1].value;
+            objToReturn.phoneNumber = res.informations[0].value;
+            setPersonnalInformation(objToReturn);
+        });
     }, []);
-    
+
     const handleClickOpenMail = () => {
         setMail(true);
     };
@@ -100,7 +106,6 @@ const Header = () => {
         setMdp(false);
     };
 
-
     const handleClickOpenData = () => {
         setData(true);
     };
@@ -108,7 +113,6 @@ const Header = () => {
     const handleCloseData = () => {
         setData(false);
     };
-
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -142,78 +146,89 @@ const Header = () => {
                     </DialogActions>
                 </Dialog>
             </div>
-        )};
+        );
+    };
 
-        const returnDialogMdp = () => {
-            return (
-                <div>
+    const returnDialogMdp = () => {
+        return (
+            <div>
+                <Dialog
+                    open={openMdp}
+                    onClose={handleCloseMdp}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title"></DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            scolarite@campusid.com
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseMdp} color="primary">
+                            Fermé
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    };
+
+    const returnDialogData = () => {
+        return (
+            <div>
+                {personnalInformation != null ? (
                     <Dialog
-                        open={openMdp}
-                        onClose={handleCloseMdp}
+                        fullWidth={true}
+                        open={openData}
+                        onClose={handleCloseData}
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description"
                     >
                         <DialogTitle id="alert-dialog-title"></DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                                scolarite@campusid.com
-                            </DialogContentText>
-                        </DialogContent>
+                        <ImageCard
+                            image={src}
+                            title={''}
+                            text={''}
+                            hasButton={false}
+                            buttonText={'détails'}
+                            altImage={'Avatar'}
+                            textCompany={''}
+                            typeDeMission={''}
+                            duree={''}
+                            start={
+                                'Inscrit depuis : ' +
+                                moment(personnalInformation.dateStart).format(
+                                    'll'
+                                )
+                            }
+                            end={''}
+                            contact={''}
+                            phone={
+                                'Téléphone : ' +
+                                personnalInformation.phoneNumber
+                            }
+                            mail={'Email : ' + personnalInformation.email}
+                            adress={'Adress : ' + personnalInformation.address1}
+                            postal={
+                                'Code postal : ' +
+                                personnalInformation.postalCode
+                            }
+                            ville={'Ville : ' + personnalInformation.city}
+                            pays={'Pays : ' + personnalInformation.country}
+                        />
                         <DialogActions>
-                            <Button onClick={handleCloseMdp} color="primary">
+                            <Button onClick={handleCloseData} color="primary">
                                 Fermé
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </div>
-            )};
-
-            const returnDialogData = () => {
-                return (
-                    <div>
-                        { personnalInformation != null ?
-                            (<Dialog
-                                fullWidth={true}
-                                open={openData}
-                                onClose={handleCloseData}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title"></DialogTitle>
-                                <ImageCard
-                                    image={
-                                        src
-                                    }
-                                    title={""}
-                                    text={
-                                        ""
-                                    }
-                                    hasButton={false}
-                                    buttonText={'détails'}
-                                    altImage={'Avatar'}
-                                    textCompany={''}
-                                    typeDeMission={''}
-                                    duree={''}
-                                    start={'Inscrit depuis : ' + moment(personnalInformation.dateStart).format('ll')}
-                                    end={''}
-                                    contact={''}
-                                    phone={'Téléphone : ' + personnalInformation.phoneNumber}
-                                    mail={'Email : ' + personnalInformation.email}
-                                    adress={'Adress : ' + personnalInformation.address1}
-                                    postal={'Code postal : ' + personnalInformation.postalCode}
-                                    ville={'Ville : ' + personnalInformation.city}
-                                    pays={'Pays : ' + personnalInformation.country}
-                                />
-                                <DialogActions>
-                                    <Button onClick={handleCloseData} color="primary">
-                                        Fermé
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>) :
-                        ""}
-
-                    </div>
-                )};
+                ) : (
+                    ''
+                )}
+            </div>
+        );
+    };
 
     return (
         <div className={classes.container}>
@@ -294,7 +309,6 @@ const Header = () => {
                                             ? `${currentUser.lastname} ${currentUser.firstname}`
                                             : 'Nom Prénom'}
                                     </Typography>
-                                    
                                 </MenuItem>
                                 <MenuItem onClick={handleClose}>
                                     <div
@@ -303,34 +317,35 @@ const Header = () => {
                                             marginTop: '35px',
                                         }}
                                     >
-                                        <div  className={classes.containerLogin}>
-                                        <Link
-                                            to="/"
-                                            style={{ textDecoration: 'none' }}
-                                            className={classes.containerLogin}
-
-                                        >
-
-                                        
-                                            
-                                        
-                                            <ButtonCustom
-                                                callBack={disconnected}
-                                                typeButton="contained"
-                                                valueButton="se déconnecter"
-                                                icon = {< ExitToAppOutlinedIcon/>}
-                                            ></ButtonCustom>
-                                          </Link>
+                                        <div className={classes.containerLogin}>
+                                            <Link
+                                                to="/"
+                                                style={{
+                                                    textDecoration: 'none',
+                                                }}
+                                                className={
+                                                    classes.containerLogin
+                                                }
+                                            >
+                                                <ButtonCustom
+                                                    callBack={disconnected}
+                                                    typeButton="contained"
+                                                    valueButton="se déconnecter"
+                                                    icon={
+                                                        <ExitToAppOutlinedIcon />
+                                                    }
+                                                ></ButtonCustom>
+                                            </Link>
 
                                             <br></br>
-                                       
+
                                             <ButtonCustom
                                                 callBack={handleClickOpenData}
                                                 typeButton="contained"
                                                 valueButton="Données personnelles"
-                                                icon = {< StorageOutlinedIcon/>}
+                                                icon={<StorageOutlinedIcon />}
                                             ></ButtonCustom>
-                        </div>
+                                        </div>
                                     </div>
                                 </MenuItem>
                             </Menu>
@@ -338,7 +353,6 @@ const Header = () => {
                     )}
                 </Toolbar>
                 {returnDialogData()}
-
             </AppBar>
         </div>
     );
