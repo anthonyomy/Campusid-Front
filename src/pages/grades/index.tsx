@@ -21,7 +21,11 @@ const Grades = () => {
     useEffect(() => {
         try {
             getMarks(idboard, classId).then((res: any) => {
-                setAllMatieres(res);
+                setAllMatieres(
+                    res.filter((matiere: any) => {
+                        return matiere.descriptionDefaultValueDomain != null;
+                    })
+                );
             });
         } catch (err) {
             console.log(err);

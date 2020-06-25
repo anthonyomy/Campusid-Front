@@ -89,7 +89,7 @@ export default function FormDialog() {
                     style={{
                         textAlign: 'center',
                         color: 'white',
-                        backgroundColor: '#B70000'
+                        backgroundColor: '#B70000',
                     }}
                     id="form-dialog-title"
                 >
