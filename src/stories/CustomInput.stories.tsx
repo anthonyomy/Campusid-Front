@@ -9,8 +9,6 @@ export default {
 
 export const customInputMail = () => {
     let inputComputed = (value: any) => {
-        console.log('value');
-        console.log('toto');
         console.log(value.target.value);
     };
 
